@@ -3,12 +3,15 @@
 //Get the player's input
 key_right = (keyboard_check(vk_right) || keyboard_check(ord("D")));
 key_left = (keyboard_check(vk_left) || keyboard_check(ord("A"))) * -1;
-key_jump = (keyboard_check(ord("W")) || keyboard_check(vk_up));
-key_down = (keyboard_check(ord("S")) || keyboard_check(vk_down));
+key_jump = (keyboard_check_pressed(ord("W")) || keyboard_check_pressed(vk_up) || keyboard_check_pressed(vk_space));
+key_jump_held = (keyboard_check(ord("W")) || keyboard_check(vk_up) || keyboard_check(vk_space));
+key_down = (keyboard_check_pressed(ord("S")) || keyboard_check_pressed(vk_down));
 
 //React to inputs
 move = key_left + key_right;
 hsp += move * acceleration;
+
+if (vsp > 40) vsp = 40;
 
 if (hsp > movespeed) {
     hsp = movespeed;
@@ -27,7 +30,7 @@ if (move == 0) {
     }
 }
 
-if (vsp < 0 && !key_jump) vsp = max(vsp, -jumpspeed / 2);
+if (vsp < 0 && !key_jump_held) vsp = max(vsp, -jumpspeed / 2);
 
 if (vsp < 31) vsp += obj_game.GRAVITY;
 

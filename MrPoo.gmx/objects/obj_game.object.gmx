@@ -49,6 +49,10 @@
           <argument>
             <kind>1</kind>
             <string>window_set_caption(WINDOW_TITLE + " | FPS: " + string(fps));
+
+if (keyboard_check(vk_escape)) {
+    room_restart();
+}
 </string>
           </argument>
         </arguments>
