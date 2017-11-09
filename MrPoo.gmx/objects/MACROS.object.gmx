@@ -4,7 +4,7 @@
   <solid>0</solid>
   <visible>-1</visible>
   <depth>0</depth>
-  <persistent>-1</persistent>
+  <persistent>0</persistent>
   <parentName>&lt;undefined&gt;</parentName>
   <maskName>&lt;undefined&gt;</maskName>
   <events>
@@ -25,40 +25,15 @@
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>x = 0;
-y = 0;
+            <string>wSize = instance_number(obj_wall);
 
-focus = obj_player;
-</string>
-          </argument>
-        </arguments>
-      </action>
-    </event>
-    <event eventtype="3" enumb="0">
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>view_xview = x;
-view_yview = y;
+xpos[wSize] = 0;
+ypos[wSize] = 0;
 
-x = lerp(x, focus.x + focus.sprite_width / 2 - view_wview / 2, 0.1);
-y = lerp(y, focus.y + focus.sprite_height / 2 - view_hview / 2, 0.1);
-
-x = clamp(x, 0, room_width - view_wview);
-y = clamp(y, 0, room_height - view_hview);
+for (var i = 0; i &lt; wSize; i++) {
+    temp = instance_find(obj_wall, i);
+    xpos[wSize] = .x;
+}
 </string>
           </argument>
         </arguments>
