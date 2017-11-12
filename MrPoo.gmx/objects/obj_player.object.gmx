@@ -33,15 +33,16 @@ hsp = 0;
 vsp = 0;
 jumpspeed = 22;
 movespeed = 15;
-moverunspeed = 24;
+moverunspeed = 20;
 
-fric = 2;
-air_fric = 0.5;
+fric = 4;
+air_fric = 0.6;
 
 canMove = false;
 
 jtime = 0;
-time = 0;
+
+stime = 15;
 </string>
           </argument>
         </arguments>
@@ -89,33 +90,15 @@ show_debug_message(gamepad_is_connected(0));
         <arguments>
           <argument>
             <kind>1</kind>
-            <string>///Sprite
+            <string>///All
 
-time++;
-if (time &gt; 15) {
+if (stime &gt; 0)
+    stime--;
+if (stime == 0) {
     canMove = true;
 }
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Movement &amp; Jumping
+
+/// Movement &amp; Jumping
 if (!canMove) return 0;
 
 //Get the player's input
@@ -124,6 +107,50 @@ key_left = keyboard_check(vk_left) || keyboard_check(ord("A"));
 key_jump = keyboard_check_pressed(vk_space) || gamepad_button_check_pressed(0, gp_face1);
 key_jump_held = keyboard_check(vk_space) || gamepad_button_check_released(0, gp_face1);
 key_run = keyboard_check(vk_shift) || gamepad_button_check(0, gp_face3);
+
+/// Wall Jumping
+
+if (canMove) {
+    if (place_free(x,y+1)) {
+        if ((key_jump) &amp;&amp; (place_meeting(x+2,y,obj_wall))) {
+            if (key_left) {
+                vsp = -jumpspeed;
+                hsp -= movespeed;
+            }
+            else if (key_right) {
+                vsp = -jumpspeed;
+                if (key_run) {
+                    hsp -= movespeed * 2.5;
+                } else {
+                    hsp -= movespeed * 1.5;
+                }
+            }
+            else {
+                vsp = -jumpspeed;
+                hsp -= 20;
+            }
+        }
+        if ((key_jump) &amp;&amp; (place_meeting(x-2,y,obj_wall))) &amp;&amp; !place_meeting(x,y+1,obj_wall) {
+            if (key_left) {
+                vsp = -jumpspeed;
+                if (key_run) {
+                    hsp += movespeed * 2.5;
+                } else {
+                    hsp += movespeed * 1.5;
+                }
+            }
+            else if (key_right) {
+                vsp = -jumpspeed;
+                hsp += movespeed;
+            }
+            else {
+                vsp = -jumpspeed;
+                hsp += 20;
+            }
+        }
+    }
+}
+
 
 //React to inputs
 
@@ -175,11 +202,11 @@ if (place_meeting(x+1,y,obj_wall) || place_meeting(x-1,y,obj_wall)) {
 
 if (!place_meeting(x,y+1,obj_wall)) {
     if (hsp &gt; 0) {
-        hsp = round(hsp);
+        //hsp = round(hsp);
         hsp -= air_fric;
     }
     if (hsp &lt; 0) {
-        hsp = round(hsp);
+        //hsp = round(hsp);
         hsp += air_fric;
     }
 } else if (!key_left &amp;&amp; !key_right) {
@@ -236,132 +263,13 @@ if (place_meeting(x,y+vsp,obj_wall))
     vsp = 0;
 }
 y += vsp;
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Safe
-if (y &gt; room_height * 1.1) {
-    room_restart();
-}
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Wall Jumping
 
-if (!canMove) return 0;
+if (y &gt; room_height * 1.2) room_restart();
 
-if (place_free(x,y+1)) {
-    if ((key_jump) &amp;&amp; (place_meeting(x+2,y,obj_wall))) {
-        if (key_left) {
-            vsp = -jumpspeed;
-            hsp -= movespeed;
-        }
-        else if (key_right) {
-            vsp = -jumpspeed;
-            if (key_run) {
-                hsp -= movespeed * 2.5;
-            } else {
-                hsp -= movespeed * 1.5;
-            }
-        }
-        else {
-            vsp = -jumpspeed;
-            hsp -= 20;
-        }
-    }
-    if ((key_jump) &amp;&amp; (place_meeting(x-2,y,obj_wall))) &amp;&amp; !place_meeting(x,y+1,obj_wall) {
-        if (key_left) {
-            vsp = -jumpspeed;
-            if (key_run) {
-                hsp += movespeed * 2.5;
-            } else {
-                hsp += movespeed * 1.5;
-            }
-        }
-        else if (key_right) {
-            vsp = -jumpspeed;
-            hsp += movespeed;
-        }
-        else {
-            vsp = -jumpspeed;
-            hsp += 20;
-        }
-    }
-}
-</string>
-          </argument>
-        </arguments>
-      </action>
-      <action>
-        <libid>1</libid>
-        <id>603</id>
-        <kind>7</kind>
-        <userelative>0</userelative>
-        <isquestion>0</isquestion>
-        <useapplyto>-1</useapplyto>
-        <exetype>2</exetype>
-        <functionname></functionname>
-        <codestring></codestring>
-        <whoName>self</whoName>
-        <relative>0</relative>
-        <isnot>0</isnot>
-        <arguments>
-          <argument>
-            <kind>1</kind>
-            <string>/// Spikes
+/// Spikes
 
-if (place_meeting(x,y,obj_spike)) {
-    x = xstart;
-    y = ystart;
-    acc = 2;
-    accrun = 4;
-    hsp = 0;
-    vsp = 0;
-    jumpspeed = 22;
-    movespeed = 15;
-    moverunspeed = 24;
-    
-    fric = 2;
-    air_fric = 0.6;
-    
-    canMove = false;
-    
-    jtime = 0;
-    time = 0;
+if (place_meeting(x,y,obj_spike) || place_meeting(x,y,obj_moving_spike_h) || place_meeting(x,y,obj_moving_spike_v)) {
+    scr_restart();
 }
 </string>
           </argument>

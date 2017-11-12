@@ -11,6 +11,8 @@
     <sprite>sprites\spr_spike</sprite>
     <sprite>sprites\spr_player_create</sprite>
     <sprite>sprites\spr_door</sprite>
+    <sprite>sprites\spr_ice_cream_sandwich</sprite>
+    <sprite>sprites\spr_unused</sprite>
   </sprites>
   <backgrounds name="background">
     <background>background\bg_bg</background>
@@ -19,6 +21,7 @@
   <scripts name="scripts">
     <script>scripts\scr_toggle_menu.gml</script>
     <script>scripts\scr_get_gamepad_input.gml</script>
+    <script>scripts\scr_restart.gml</script>
   </scripts>
   <fonts name="fonts">
     <font>fonts\fnt_arial</font>
@@ -31,11 +34,19 @@
     <object>objects\obj_menu</object>
     <object>objects\obj_spike</object>
     <object>objects\obj_door</object>
+    <object>objects\obj_ice_cream_sandwich</object>
+    <object>objects\obj_moving_spike_h</object>
+    <object>objects\obj_moving_spike_v</object>
+    <object>objects\obj_moving_spike_stopper</object>
   </objects>
   <rooms name="rooms">
     <room>rooms\rm_init</room>
+    <room>rooms\rm_1_5</room>
     <room>rooms\rm_1_1</room>
     <room>rooms\rm_1_2</room>
+    <room>rooms\rm_1_3</room>
+    <room>rooms\rm_1_4</room>
+    <room>rooms\rm_1_7</room>
   </rooms>
   <constants number="1">
     <constant name="WINDOW_TITLE">"Mr Poo"</constant>

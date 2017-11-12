@@ -54,6 +54,10 @@ DEBUG = false;
 if (keyboard_check_pressed(vk_f1)) {
     DEBUG = !DEBUG;
 }
+if (keyboard_check_pressed(vk_f2)) {
+    // may not want to leave this in the final game.
+    game_restart();
+}
 </string>
           </argument>
         </arguments>

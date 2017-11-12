@@ -33,6 +33,12 @@ if (place_meeting(x-1,y,obj_wall) &amp;&amp; !place_meeting(x,y+1,obj_wall)) {
     image_angle = -90;
     x += sprite_width;
 }
+
+if (place_meeting(x,y-1,obj_wall) &amp;&amp; !place_meeting(x,y+1,obj_wall)) {
+    image_angle = 180;
+    y += sprite_height;
+    x += sprite_width;
+}
 </string>
           </argument>
         </arguments>
