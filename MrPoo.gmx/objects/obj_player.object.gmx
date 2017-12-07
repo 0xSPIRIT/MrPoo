@@ -27,16 +27,16 @@
             <kind>1</kind>
             <string>/// init vars
 
-acc = 2;
-accrun = 4;
+acc = 1.5;
+accrun = 2;
 hsp = 0;
 vsp = 0;
 jumpspeed = 22;
 movespeed = 15;
 moverunspeed = 20;
 
-fric = 4;
-air_fric = 0.6;
+fric = 1.5;
+air_fric = 0.2;
 
 canMove = false;
 
@@ -98,8 +98,6 @@ if (stime == 0) {
     canMove = true;
 }
 
-/// Movement &amp; Jumping
-if (!canMove) return 0;
 
 //Get the player's input
 key_right = keyboard_check(vk_right) || keyboard_check(ord("D"));
@@ -107,6 +105,9 @@ key_left = keyboard_check(vk_left) || keyboard_check(ord("A"));
 key_jump = keyboard_check_pressed(vk_space) || gamepad_button_check_pressed(0, gp_face1);
 key_jump_held = keyboard_check(vk_space) || gamepad_button_check_released(0, gp_face1);
 key_run = keyboard_check(vk_shift) || gamepad_button_check(0, gp_face3);
+
+/// Movement &amp; Jumping
+if (!canMove) return 0;
 
 /// Wall Jumping
 
@@ -118,34 +119,34 @@ if (canMove) {
                 hsp -= movespeed;
             }
             else if (key_right) {
-                vsp = -jumpspeed;
+                vsp = -jumpspeed * 1.5;
                 if (key_run) {
-                    hsp -= movespeed * 2.5;
+                    hsp -= movespeed * 1.8;
                 } else {
-                    hsp -= movespeed * 1.5;
+                    hsp -= movespeed * 1.3;
                 }
             }
             else {
                 vsp = -jumpspeed;
-                hsp -= 20;
+                hsp -= 15;
             }
         }
         if ((key_jump) &amp;&amp; (place_meeting(x-2,y,obj_wall))) &amp;&amp; !place_meeting(x,y+1,obj_wall) {
             if (key_left) {
                 vsp = -jumpspeed;
                 if (key_run) {
-                    hsp += movespeed * 2.5;
+                    hsp += movespeed * 1.8;
                 } else {
-                    hsp += movespeed * 1.5;
+                    hsp += movespeed * 1.3;
                 }
             }
             else if (key_right) {
                 vsp = -jumpspeed;
-                hsp += movespeed;
+                hsp += movespeed * 1.3;
             }
             else {
                 vsp = -jumpspeed;
-                hsp += 20;
+                hsp += 15;
             }
         }
     }
@@ -158,41 +159,36 @@ if (gamepad_is_connected(0)) {
     scr_get_gamepad_input(0);
 }
 
-if (key_right) {
-    if (!key_run) {
-        if (hsp &lt; movespeed) {
-          hsp = round(hsp);
-          hsp += acc;
+if (place_meeting(x,y+1,obj_wall)) {
+    if (key_right) {
+        if (!key_run) {
+            if (hsp &lt; movespeed) {
+              hsp = round(hsp);
+              hsp += acc;
+            }
+        }
+        if (key_run) {
+            if (hsp &lt; moverunspeed) {
+                hsp = round(hsp);
+                hsp += accrun;
+            }
         }
     }
-    if (key_run) {
-        if (hsp &lt; moverunspeed) {
-            hsp = round(hsp);
-            hsp += accrun;
+    if (key_left) {
+        if (!key_run) {
+            if (hsp &gt; -movespeed) {
+              hsp = round(hsp);
+              hsp -= acc;
+            }
+        }
+        if (key_run) {
+            if (hsp &gt; -moverunspeed) {
+                hsp = round(hsp);
+                hsp -= accrun;
+            }
         }
     }
-}
-if (key_left) {
-    if (!key_run) {
-        if (hsp &gt; -movespeed) {
-          hsp = round(hsp);
-          hsp -= acc;
-        }
-    }
-    if (key_run) {
-        if (hsp &gt; -moverunspeed) {
-            hsp = round(hsp);
-            hsp -= accrun;
-        }
-    }
-}
-
-if (!key_run) {
-    hsp += xaxis * acc;
-}
-if (key_run) {
-    hsp += xaxis * accrun;
-}
+} 
 
 if (place_meeting(x+1,y,obj_wall) || place_meeting(x-1,y,obj_wall)) {
     if (vsp &lt; 30) vsp += obj_game.GRAVITY / 1.55;
@@ -201,26 +197,16 @@ if (place_meeting(x+1,y,obj_wall) || place_meeting(x-1,y,obj_wall)) {
 }
 
 if (!place_meeting(x,y+1,obj_wall)) {
-    if (hsp &gt; 0) {
-        //hsp = round(hsp);
-        hsp -= air_fric;
-    }
-    if (hsp &lt; 0) {
-        //hsp = round(hsp);
-        hsp += air_fric;
-    }
+    //hsp -= hsp % air_fric;
+    if (hsp &gt; -fric &amp;&amp; hsp &lt; fric) hsp = 0; 
 } else if (!key_left &amp;&amp; !key_right) {
-    if (hsp &gt; 0) {
-        hsp = round(hsp);
-        hsp -= fric;
-    }
-    if (hsp &lt; 0) {
-        hsp = round(hsp);
-        hsp += fric;
-    }
-    if (hsp &gt; -accrun &amp;&amp; hsp &lt; accrun) hsp = 0;
+    //hsp -= hsp % fric;
+    if (hsp &gt; -fric &amp;&amp; hsp &lt; fric) hsp = 0; 
 }
 
+show_debug_message(hsp);
+
+    
 if (!place_meeting(x,y+1,obj_wall) &amp;&amp; place_meeting(xprevious-hsp, yprevious+1, obj_wall)) {
     jtime = 8;
 }
@@ -266,9 +252,9 @@ y += vsp;
 
 if (y &gt; room_height * 1.2) room_restart();
 
-/// Spikes
+// Spike
 
-if (place_meeting(x,y,obj_spike) || place_meeting(x,y,obj_moving_spike_h) || place_meeting(x,y,obj_moving_spike_v)) {
+if (place_meeting(x,y,obj_spike)) {
     scr_restart();
 }
 </string>
